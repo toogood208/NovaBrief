@@ -142,6 +142,6 @@ app/src/main/java/com/example/novabrief/
 
 ## Demo & Links
 - [Appetize Public Preview](https://appetize.io/app/b_gk7zcey3vvww6nroz6idjejt64)
-- ![NovaBrief Demo Desktop](https://drive.google.com/file/d/1al0lZj0cwzdyAlYegHtkbA0x2Q9Y5GvX/view?usp=sharing)
-- ![NovaBrief Demo Mobile](https://drive.google.com/file/d/1al0lZj0cwzdyAlYegHtkbA0x2Q9Y5GvX/view?usp=sharing)
+- [NovaBrief Demo Desktop](https://drive.google.com/file/d/1al0lZj0cwzdyAlYegHtkbA0x2Q9Y5GvX/view?usp=sharing)
+- [NovaBrief Demo Web](https://drive.google.com/file/d/1al0lZj0cwzdyAlYegHtkbA0x2Q9Y5GvX/view?usp=sharing)
 
