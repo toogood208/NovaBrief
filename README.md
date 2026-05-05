@@ -1,10 +1,28 @@
+
 # NovaBrief
 
-NovaBrief is a native Android news app built with Kotlin and Jetpack Compose. It fetches live headlines from NewsAPI, caches articles locally for offline reading, and presents them in an editorial-style interface with animated feed and detail experiences.
+## Overview
+
+NovaBrief is a multiplatform news app built with Kotlin Multiplatform and Jetpack Compose. It fetches live headlines from NewsAPI, caches articles locally for offline reading, and presents them in an editorial-style interface with animated feed and detail experiences. The project demonstrates modern Android and web (JS) development with shared business logic and UI patterns.
+
 
 ## App Type
 
 This project implements the `News App` option from the task brief.
+## Platform Adaptation & Support
+
+NovaBrief is designed as a multiplatform project:
+
+- **Android**: Native app using Jetpack Compose, Room, and other Android libraries.
+- **Web (JS)**: Compose Multiplatform for web UI, sharing business logic and presentation code with Android.
+
+The codebase is organized to maximize code sharing between platforms, with platform-specific modules for UI and integration.
+
+**Supported Platforms:**
+- Android 6.0+
+- Modern desktop browsers (for JS/web preview)
+
+See the `shared/` and `app/` modules for multiplatform structure.
 
 ## Features
 
@@ -118,40 +136,12 @@ app/src/main/java/com/example/novabrief/
       presentation/
 ```
 
-## Configuration
 
-Add your NewsAPI key to `local.properties`:
+## Screenshots & Demo
+![desktop-app](img.png)
 
-```properties
-NEWS_API_KEY=your_key_here
-```
-
-The Android SDK path must also be configured in `local.properties`.
-
-## Build and Run
-
-1. Open the project in Android Studio.
-2. Add `NEWS_API_KEY` to `local.properties`.
-3. Connect an Android device or start an emulator.
-4. Run the app from Android Studio or use:
-
-```powershell
-.\gradlew.bat installDebug
-```
-
-## Screenshots / Recording
-
-Add screenshots or a short screen recording here before submission:
-
-- Feed screen
-- Detail screen
-- Offline/error state
-- Personalization screen
-
-## Submission Checklist
-
-- Appetize public preview link
-- GitHub repository link
-- LinkedIn or X documentation post link
-- APK artifact
+## Demo & Links
+- [Appetize Public Preview](https://appetize.io/app/b_gk7zcey3vvww6nroz6idjejt64)
+- ![NovaBrief Demo Desktop](https://drive.google.com/file/d/1al0lZj0cwzdyAlYegHtkbA0x2Q9Y5GvX/view?usp=sharing)
+- ![NovaBrief Demo Mobile](https://drive.google.com/file/d/1al0lZj0cwzdyAlYegHtkbA0x2Q9Y5GvX/view?usp=sharing)
 
