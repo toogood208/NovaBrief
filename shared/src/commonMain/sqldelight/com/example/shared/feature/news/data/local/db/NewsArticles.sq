@@ -1,0 +1,42 @@
+CREATE TABLE news_articles (
+  id TEXT NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  content TEXT NOT NULL,
+  imageUrl TEXT NOT NULL,
+  articleUrl TEXT NOT NULL,
+  source TEXT NOT NULL,
+  publishedAt TEXT NOT NULL,
+  category TEXT NOT NULL
+);
+
+selectByCategory:
+SELECT *
+FROM news_articles
+WHERE category = ?
+ORDER BY publishedAt DESC;
+
+selectById:
+SELECT *
+FROM news_articles
+WHERE id = ?
+LIMIT 1;
+
+deleteByCategory:
+DELETE FROM news_articles
+WHERE category = ?;
+
+upsertArticle:
+INSERT OR REPLACE INTO news_articles(
+  id,
+  title,
+  summary,
+  content,
+  imageUrl,
+  articleUrl,
+  source,
+  publishedAt,
+  category
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+

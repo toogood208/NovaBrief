@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
-import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Verified
@@ -47,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.AndroidViewModel
@@ -56,10 +54,17 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.novabrief.BuildConfig
 import com.example.novabrief.core.navigation.AppRoute
-import com.example.novabrief.feature.news.data.local.NewsDatabase
-import com.example.novabrief.feature.news.data.repository.toDomain
-import com.example.novabrief.feature.news.domain.model.NewsArticle
+import com.example.novabrief.feature.news.data.local.SharedNewsDatabaseProvider
+import com.example.shared.feature.news.data.remote.NewsApiClient
+import com.example.shared.feature.news.data.repository.JvmNewsRepository
+import com.example.shared.feature.news.domain.model.NewsArticle
+import com.example.shared.feature.news.presentation.NewsDetailScreenUi
+import com.example.shared.feature.news.presentation.NewsEmptyState
+import com.example.shared.feature.news.presentation.NewsroomLogoMark
+import com.example.shared.feature.news.presentation.SharedNewsDetailUiState
+import com.example.shared.feature.news.presentation.newsroomLogoFontFamily
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -78,12 +83,16 @@ class NewsDetailViewModel(
     savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
     private val articleId = savedStateHandle.get<String>(AppRoute.NewsDetail.articleIdArg).orEmpty()
-    private val dao = NewsDatabase.getInstance(application).dao
+    private val repository = JvmNewsRepository(
+        apiService = NewsApiClient.service,
+        localDatabase = SharedNewsDatabaseProvider.getInstance(application),
+        apiKey = BuildConfig.NEWS_API_KEY
+    )
 
-    internal val state: StateFlow<NewsDetailUiState> = dao.getArticleById(articleId)
-        .map { entity ->
+    internal val state: StateFlow<NewsDetailUiState> = repository.observeArticleById(articleId)
+        .map { article ->
             NewsDetailUiState(
-                article = entity?.toDomain(),
+                article = article,
                 isLoading = false
             )
         }
@@ -98,74 +107,19 @@ class NewsDetailViewModel(
 fun NewsDetailScreen(onBack: () -> Unit) {
     val viewModel: NewsDetailViewModel = viewModel()
     val uiState by viewModel.state.collectAsState()
-    val article = uiState.article
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF050911))
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) {
-        DetailTopBar(onBack = onBack)
-        HorizontalDivider(color = Color(0xFF1A2230))
-
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color(0xFFF04152))
-                }
-            }
-
-            article == null -> {
-                NewsEmptyState(
-                    title = "Story unavailable",
-                    message = "This article is no longer in local cache. Refresh the feed and try again.",
-                    actionLabel = "GO BACK",
-                    onAction = onBack
-                )
-            }
-
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 28.dp),
-                    verticalArrangement = Arrangement.spacedBy(0.dp)
-                ) {
-                    item {
-                        StoryHeader(article = article)
-                    }
-                    item {
-                        DetailHero(article = article)
-                    }
-                    item {
-                        StoryInsightCard(article = article)
-                    }
-                    item {
-                        StoryBodyCard(article = article)
-                    }
-                    item {
-                        DetailActionRow(
-                            onOpenSource = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.articleUrl))
-                                context.startActivity(intent)
-                            }
-                        )
-                    }
-                    item {
-                        CommunityStub()
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
-            }
+    NewsDetailScreenUi(
+        uiState = SharedNewsDetailUiState(
+            article = uiState.article,
+            isLoading = uiState.isLoading
+        ),
+        onBack = onBack,
+        onOpenSource = { url ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(intent)
         }
-    }
+    )
 }
 
 @Composable
